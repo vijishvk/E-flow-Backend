@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'app-backend'
         CONTAINER_NAME = 'backend-contain'
-        EC2_IP = '13.126.50.139'
+        EC2_IP = '13.205.90.64'
     }
 
     stages {
