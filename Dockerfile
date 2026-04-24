@@ -1,18 +1,15 @@
-FROM node:20-bookworm
- 
-RUN apt-get update && apt-get install -y \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev
+FROM node:20
  
 WORKDIR /app
  
 COPY package*.json ./
-RUN npm install
+RUN npm config set registry https://registry.npmjs.org/
+RUN npm cache clean --force
+RUN rm -rf node_modules package-lock.json
+RUN npm install --legacy-peer-deps --no-audit --no-fund
  
 COPY . .
  
 EXPOSE 3000
+ 
 CMD ["npm", "start"]
