@@ -28,6 +28,9 @@ pipeline {
                             cd /home/ubuntu/backend && \
                             git clone https://github.com/vijishvk/E-flow-Backend.git && \
                             cd /home/ubuntu/backend/E-flow-Backend && \
+			    docker stop ${CONTAINER_NAME} || true \
+                            docker rm ${CONTAINER_NAME} || true \
+                            docker rmi ${IMAGE_NAME} || true \	
                             docker build -t ${IMAGE_NAME} . && \
                           
                             docker run -d -p 3000:3000 ${IMAGE_NAME}"
