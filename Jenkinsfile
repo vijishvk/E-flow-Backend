@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'app-backend'
         CONTAINER_NAME = 'backend-contain'
-        EC2_IP = '13.205.90.64'
+        EC2_IP = '100.53.248.149'
     }
 
     stages {
@@ -20,29 +20,18 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent(['ec2_creds']) {
-                    sh """
-                          ssh -o StrictHostKeyChecking=no ubuntu@${EC2_IP} "
-                          rm -rf /home/ubuntu/backend
-                          mkdir -p /home/ubuntu/backend
-                          cd /home/ubuntu/backend
-                        
-
-                          if [ ! -d E-flow-Backend ]; then 
-                            git clone git@github.com:cloudhostingky-alt/E-flow-Backend.git
-                          fi 
+                    sh '''
+                        ssh -A -o StrictHostKeyChecking=no ubuntu@${EC2_IP} \
+                            "set -e && \
+                            rm -rf /home/ubuntu/backend && \
+                            mkdir /home/ubuntu/backend && \
+                            cd /home/ubuntu/backend && \
+                            git clone https://github.com/vijishvk/E-flow-Backend.git && \
+                            cd /home/ubuntu/backend/E-flow-Backend && \
+                            docker build -t ${IMAGE_NAME} . && \
                           
-                           cd E-flow-Backend
-                           git checkout main
-                           git pull origin main
-                        
-                           
-                           docker stop ${CONTAINER_NAME} || true
-                           docker rm ${CONTAINER_NAME} || true
-                           docker rmi ${IMAGE_NAME} || true
-                           docker build -t ${IMAGE_NAME} .
-                           docker run -d -p 3000:3000 --name ${CONTAINER_NAME} ${IMAGE_NAME}
-                        "
-                    """
+                            docker run -d -p 3000:3000 ${IMAGE_NAME}"
+                    '''
                 }
             }
         }
