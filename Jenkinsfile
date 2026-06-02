@@ -23,13 +23,11 @@ pipeline {
                             cd /home/ubuntu/backend && \
                             git clone https://github.com/vijishvk/E-flow-Backend.git && \
                             cd /home/ubuntu/backend/E-flow-Backend && \
-                            (docker stop ${CONTAINER_NAME} || true) && \
-                            (docker rm ${CONTAINER_NAME} || true) && \
-                            (docker ps -q --filter ancestor=${IMAGE_NAME} | xargs -r docker stop) && \
-                            (docker ps -aq --filter ancestor=${IMAGE_NAME} | xargs -r docker rm) && \
-                            (docker rmi -f ${IMAGE_NAME} || true) && \
-                            docker build -t ${IMAGE_NAME} . && \
-                            docker run -d -p 3000:3000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                            (docker ps -q --filter publish=3000 | xargs -r docker stop) && \
+                            (docker ps -aq --filter publish=3000 | xargs -r docker rm) && \
+                            (docker rmi -f app-backend || true) && \
+                            docker build -t app-backend . && \
+                            docker run -d -p 3000:3000 --name backend-contain app-backend"
                     '''
                 }
             }
